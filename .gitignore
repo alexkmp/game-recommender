@@ -44,3 +44,5 @@ out/
 postgres/data
 ollama/
 gradle/
+
+.env
