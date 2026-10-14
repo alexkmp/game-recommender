@@ -1,0 +1,28 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: chat-buddy
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: qwen2.5:7b
+      embedding:
+        model: mxbai-embed-large
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5431/ragdb
+    username: postgres
+    password: postgres
+  main:
+    allow-circular-references: true
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    org.springframework.ai.chat.client.advisor: DEBUG
+    com.alex: INFO
