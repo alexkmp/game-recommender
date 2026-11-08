@@ -22,7 +22,7 @@ spring:
 
 logging:
   pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%green(%d{HH:mm:ss.SSS}) %red([%thread]) %blue(%-5level) %yellow(%logger{36}) - %msg%n"
   level:
     org.springframework.ai.chat.client.advisor: DEBUG
     com.alex: INFO
