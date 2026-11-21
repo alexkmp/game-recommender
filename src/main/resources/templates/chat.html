@@ -1,68 +1,163 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${chat != null} ? 'Game recommender — ' + chat.title : 'Game recommender'">Game recommender</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script defer th:src="@{/js/chat.js}"></script>
 </head>
-<body class="comic-body">
+<body class="app" data-theme="dark">
+
 <div class="chat-container">
 
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-top">
-            <h1>Game recommender</h1>
+
+            <!-- Brand -->
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="square" stroke-linejoin="miter">
+                        <path d="M6 12h4m2 0h6"/>
+                        <rect x="2" y="6" width="20" height="12" rx="2"/>
+                        <path d="M7 15.5c1.5-1 3-1 4 0M13 15.5c1.5-1 3-1 4 0"/>
+                    </svg>
+                </span>
+                <h1 class="brand-title">Game&nbsp;Recommender</h1>
+            </div>
+
+            <button class="icon-btn sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="square" stroke-linejoin="miter">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
 
             <!-- Chat list -->
-            <div class="chat-list-wrapper">
+            <nav class="chat-list-wrapper" aria-label="Chat history">
+                <p class="chat-list-label">Chats</p>
                 <ul class="chat-list">
                     <li th:each="c : ${chats}"
                         th:classappend="${chat != null and chat.id != null and c.id == chat.id} ? 'active' : ''">
                         <a th:href="@{/chat/{id}(id=${c.id})}">
-                            <span th:text="${c.title}">Чат</span>
+                            <span class="chat-dot" aria-hidden="true"></span>
+                            <span class="chat-title" th:text="${c.title}">Чат</span>
                         </a>
-                        <!-- Форма удаления чата -->
                         <form th:action="@{/chat/{id}/delete(id=${c.id})}" method="post"
                               onsubmit="return confirm('Delete chat?');">
-                            <button type="submit" class="delete-chat-btn">✕</button>
+                            <button type="submit" class="delete-chat-btn" aria-label="Delete chat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="square" stroke-linejoin="miter">
+                                    <path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                </svg>
+                            </button>
                         </form>
                     </li>
                 </ul>
-            </div>
+            </nav>
         </div>
 
         <!-- New chat form -->
         <div class="sidebar-bottom">
             <form action="/chat/new" method="post" class="new-chat-form">
-                <input type="text" name="title" placeholder="New chat name" required/>
-                <button type="submit" class="new-chat">Create new chat</button>
+                <input type="text" name="title" placeholder="New chat name" required autocomplete="off"/>
+                <button type="submit" class="new-chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Create new chat
+                </button>
             </form>
         </div>
     </aside>
 
+    <!-- Sidebar backdrop for mobile -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
     <!-- Chat main section -->
     <main class="chat-main">
 
+        <!-- Header -->
+        <header class="chat-header">
+            <button class="icon-btn mobile-menu-btn" id="mobile-menu-btn" aria-label="Open sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="square" stroke-linejoin="miter">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <h2 class="chat-header-title" th:text="${chat != null} ? ${chat.title} : 'Welcome'">Welcome</h2>
+            <button class="icon-btn theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="square" stroke-linejoin="miter">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.3 11.3 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="square" stroke-linejoin="miter">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Messages -->
         <div class="messages" id="messages">
             <th:block th:if="${chat != null}">
-                <div th:if="${!#lists.isEmpty(chat.history)}" th:each="entry : ${chat.history}"
-                     th:class="${entry.role.role == 'user'} ? 'message user' : 'message mentor'"><img
-                        th:src="${entry.role.role == 'user'} ? '/images/user.png' : '/images/mentor.png'" alt="avatar">
+                <th:block th:if="${#lists.isEmpty(chat.history)}">
+                    <div class="empty-state">
+                        <span class="empty-state-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                                 stroke-linecap="square" stroke-linejoin="miter">
+                                <path d="M6 12h4m2 0h6"/>
+                                <rect x="2" y="6" width="20" height="12" rx="2"/>
+                                <path d="M7 15.5c1.5-1 3-1 4 0M13 15.5c1.5-1 3-1 4 0"/>
+                            </svg>
+                        </span>
+                        <h3>Let&rsquo;s find your next game</h3>
+                        <p>Tell me what genres, moods or platforms you enjoy — I&rsquo;ll do the rest.</p>
+                    </div>
+                </th:block>
+                <div th:unless="${#lists.isEmpty(chat.history)}" th:each="entry : ${chat.history}"
+                     th:class="${entry.role.role == 'user'} ? 'message user' : 'message mentor'">
+                    <img class="avatar"
+                         th:src="${entry.role.role == 'user'} ? '/images/user.png' : '/images/mentor.png'"
+                         alt="avatar">
                     <div class="bubble" th:text="${entry.content}"></div>
                 </div>
             </th:block>
         </div>
 
-        <div th:if="${chat != null}">
-            <form th:action="@{/chat/{chatId}/entry(chatId=${chat.id})}" method="post" class="input-area">
-                <div class="input-bubble">
-                    <label for="chat-input" class="sr-only">Write question here</label>
-                    <textarea id="chat-input" name="prompt" placeholder="Write question here..." required></textarea>
-                    <button type="button" id="send-button">SEND</button>
+        <!-- Input -->
+        <div class="input-area">
+            <th:block th:if="${chat != null}">
+                <form th:action="@{/chat/{chatId}/entry(chatId=${chat.id})}" method="post" class="input-form"
+                      id="chat-form">
+                    <div class="input-bubble">
+                        <label for="chat-input" class="sr-only">Write question here</label>
+                        <textarea id="chat-input" name="prompt" placeholder="Write question here..." rows="1"
+                                  autocomplete="off"></textarea>
+                        <button type="button" id="send-button" aria-label="Send message">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+                                <path d="m22 2-7 20-4-9-9-4z"/>
+                                <path d="M22 2 11 13"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="input-hint">Answers stream in real time and may be inaccurate about brand-new titles.</p>
+                </form>
+            </th:block>
+            <th:block th:unless="${chat != null}">
+                <div class="input-bubble input-bubble--disabled">
+                    <span class="input-disabled-text">Create or select a chat to start talking</span>
                 </div>
-            </form>
+            </th:block>
         </div>
     </main>
 </div>
